@@ -1,0 +1,22 @@
+[
+  {
+    "name": "UAE",
+    "code": 123,
+    "region": "Western asia"
+  },
+  {
+    "name": "Kenya",
+    "code": 254,
+    "region": "Africa"
+  },
+  {
+    "name": "Nigeria",
+    "code": 234,
+    "region": "Africa"
+  },
+  {
+    "name": "Netherlands",
+    "code": 143,
+    "region": "Western europe"
+  }
+]
