@@ -1,16 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, Signal, signal } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { AppService } from './app.service';
 import { Countries } from './countries.interface';
+import { EditCountryComponent } from './edit-country/edit-country.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  viewProviders: [EditCountryComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, EditCountryComponent],
   providers: [AppService]
 })
 export class AppComponent {
@@ -18,14 +20,18 @@ export class AppComponent {
 
   // Approach one
   countries$: Observable<Countries[]> = this.appService.getData();
+  
 
   // Approach two
     // private readonly countrySubject: BehaviorSubject<Countries[]> = new BehaviorSubject<Countries[]>([]);
     // readonly countries$ = this.countrySubject.asObservable();
 
   // Approach three - signals
-  countries = signal<Countries[]>([]);
+  countries = signal<Countries[]>(this.getSignalCountries());
+  
   totalPopulation = computed(() => this.countries().map((country: Countries) => country.population).reduce((acc, curr) => { return acc + curr  }, 0));
+
+  buttonCount = signal(0);
 
   countryForm = new FormGroup({
     code: new FormControl<string>('', [Validators.required]),
@@ -37,7 +43,7 @@ export class AppComponent {
 
   constructor(private appService: AppService) { 
 
-    effect(() => console.log(this.totalPopulation))
+    effect(() => console.log(this.totalPopulation()))
   }
  
 
@@ -46,7 +52,7 @@ export class AppComponent {
       // this.getCountries();
     
     // Approach three - // Replace the value
-      this.countries.set(this.getSignalCountries());
+      // this.countries.set(this.getSignalCountries());
   }
   // Approach two
     // private getCountries(): Observable<Countries[]> {
